@@ -23,7 +23,7 @@ export class ExamView extends TextFileView {
         return this.file ? this.file.basename : "Exam";
     }
 
-    async onOpen() {
+    onOpen(): Promise<void> {
         // Prepare container
         const container = this.contentEl;
         container.empty();
@@ -35,13 +35,15 @@ export class ExamView extends TextFileView {
         this.root = ReactDOM.createRoot(reactContainer);
 
         this.renderView();
+        return Promise.resolve();
     }
 
-    async onClose() {
+    onClose(): Promise<void> {
         if (this.root) {
             this.root.unmount();
             this.root = null;
         }
+        return Promise.resolve();
     }
 
     // Abstract methods from TextFileView
@@ -81,15 +83,17 @@ export class ExamView extends TextFileView {
                     definition={this.definition}
                     app={this.app}
                     sourcePath={this.file?.path || ""}
-                    onClose={async () => {
-                        // Switch back to markdown view
-                        if (this.file) {
-                            const leaf = this.leaf;
-                            await leaf.setViewState({
-                                type: 'markdown',
-                                state: { file: this.file.path }
-                            });
-                        }
+                    onClose={() => {
+                        void (async () => {
+                            // Switch back to markdown view
+                            if (this.file) {
+                                const leaf = this.leaf;
+                                await leaf.setViewState({
+                                    type: 'markdown',
+                                    state: { file: this.file.path }
+                                });
+                            }
+                        })();
                     }}
                 />
             );

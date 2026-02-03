@@ -24,7 +24,7 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
     React.useEffect(() => {
         if (containerRef.current) {
             containerRef.current.empty();
-            MarkdownRenderer.render(
+            void MarkdownRenderer.render(
                 app,
                 content,
                 containerRef.current,
