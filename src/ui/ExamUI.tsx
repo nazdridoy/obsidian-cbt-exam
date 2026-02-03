@@ -1,4 +1,5 @@
 import * as React from "react";
+import { App } from "obsidian";
 import { ExamDefinition, ExamSession, UserAnswerState, ExamResult, Question } from "../types/types";
 import { ExamSessionManager } from "../exam/examSession";
 import { ScoringEngine } from "../exam/scoringEngine";
@@ -14,7 +15,7 @@ import { Matching } from "./questions/Matching";
 import { FillInBlank } from "./questions/FillInBlank";
 import { ShortLongAnswer } from "./questions/ShortLongAnswer";
 
-export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void }> = ({ definition, onClose }) => {
+export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void, app: App, sourcePath?: string }> = ({ definition, onClose, app, sourcePath }) => {
     // We use a ref to hold the manager, but state to force re-renders
     const managerRef = React.useRef(new ExamSessionManager(definition));
     const [session, setSession] = React.useState<ExamSession>(managerRef.current.getSession());
@@ -107,11 +108,11 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void 
 
             {/* Main Content */}
             <div className="exam-body">
-                <div style={{ marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
+                <div style={{ marginBottom: '0rem', color: 'var(--text-muted)' }}>
                     Question {session.currentQuestionIndex + 1} of {definition.questions.length}
                 </div>
 
-                {renderQuestion(currentQ, currentAns, handleAnswer, shouldShowResult)}
+                {renderQuestion(currentQ, currentAns, handleAnswer, app, shouldShowResult)}
             </div>
 
             {/* Footer */}
@@ -170,17 +171,18 @@ function renderQuestion(
     q: Question,
     ans: UserAnswerState | undefined,
     onChange: (ans: Partial<UserAnswerState>) => void,
+    app: App,
     showResult = false
 ): React.ReactNode {
     if (!q) return <div>Error: Question not found</div>;
     switch (q.type) {
-        case 'MC': return <MultipleChoice question={q} answer={ans} onChange={onChange} showResult={showResult} />;
-        case 'SATA': return <SelectAll question={q} answer={ans} onChange={onChange} showResult={showResult} />;
-        case 'TF': return <TrueFalse question={q} answer={ans} onChange={onChange} showResult={showResult} />;
-        case 'MATCH': return <Matching question={q} answer={ans} onChange={onChange} showResult={showResult} />;
-        case 'FIB': return <FillInBlank question={q} answer={ans} onChange={onChange} showResult={showResult} />;
+        case 'MC': return <MultipleChoice question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
+        case 'SATA': return <SelectAll question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
+        case 'TF': return <TrueFalse question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
+        case 'MATCH': return <Matching question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
+        case 'FIB': return <FillInBlank question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
         case 'SA':
-        case 'LA': return <ShortLongAnswer question={q} answer={ans} onChange={onChange} showResult={showResult} />;
+        case 'LA': return <ShortLongAnswer question={q} answer={ans} onChange={onChange} showResult={showResult} app={app} />;
         default: return <div>Unknown question type: {(q as Question).type}</div>;
     }
 }

@@ -1,5 +1,7 @@
 import * as React from "react";
+import { App } from "obsidian";
 import { MatchingQuestion, UserAnswerState } from "../../types/types";
+import { MarkdownContent } from "../components/MarkdownContent";
 
 interface Props {
     question: MatchingQuestion;
@@ -7,9 +9,10 @@ interface Props {
     onChange: (ans: Partial<UserAnswerState>) => void;
     readOnly?: boolean;
     showResult?: boolean;
+    app: App;
 }
 
-export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult }) => {
+export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult, app }) => {
     // State for shuffled indices of the right column
     const [rightIndices, setRightIndices] = React.useState<number[]>([]);
 
@@ -28,17 +31,6 @@ export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly
 
     // Current pairs: from answer state
     const pairs = answer.matchedPairs || [];
-
-    // Randomized indices for Right Side (should ideally be consistent per session, 
-    // but for now we'll just map them 1:1 visually and let the randomization happen at exam initialization if needed.
-    // Wait, the specification says "Group B is automatically shuffled". 
-    // But the question object has `rightItems` in original order. 
-    // We need to map visual buttons to actual data indices.
-    // For V1 simplicity: Assume backend randomization or just display as is. 
-    // Let's assume `question.rightItems` are ALREADY shuffled by the parser/session init if desired.
-    // (Our parser currently keeps them aligned 0-0, 1-1). 
-    // We should probably shuffle the DISPLAY order here if we want runtime shuffling.
-    // To keep it simple: We won't shuffle in the Component for this step, just render.
 
     // Helpers to find connection
     const getRightForLeft = (lIdx: number) => pairs.find(p => p.l === lIdx)?.r;
@@ -73,16 +65,13 @@ export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly
         }
     };
 
-    // Generate colors/badges for matched pairs
-    // We use a simple number badge 1, 2, 3... based on the Left item index + 1
-
     // If we haven't initialized shuffling yet (first render), render nothing or loading
     if (rightIndices.length !== question.rightItems.length) return null;
 
     return (
         <div className="question-matching">
-            <div className="question-text" style={{ marginBottom: '1rem', whiteSpace: 'pre-wrap' }}>
-                {question.questionText}
+            <div className="question-text" style={{ marginBottom: '1rem' }}>
+                <MarkdownContent app={app} content={question.questionText} />
             </div>
 
             <div className="matching-columns" style={{ display: 'flex', gap: '2rem' }}>
@@ -106,7 +95,7 @@ export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly
                                     position: 'relative'
                                 }}
                             >
-                                {item}
+                                <MarkdownContent app={app} content={item} />
                                 {isPaired && <span className="badge" style={{
                                     position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)',
                                     background: 'var(--interactive-accent)', color: 'white', borderRadius: '50%', width: '20px', height: '20px',
@@ -156,7 +145,7 @@ export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly
                                     minHeight: '44px' // Ensure height for badges
                                 }}
                             >
-                                {item}
+                                <MarkdownContent app={app} content={item} />
 
                                 {/* User Badge */}
                                 {isPaired && <span className="badge-user" style={{
@@ -190,3 +179,4 @@ export const Matching: React.FC<Props> = ({ question, answer, onChange, readOnly
         </div>
     );
 };
+

@@ -1,5 +1,7 @@
 import * as React from "react";
+import { App } from "obsidian";
 import { FillInBlankQuestion, UserAnswerState } from "../../types/types";
+import { MarkdownContent } from "../components/MarkdownContent";
 
 interface Props {
     question: FillInBlankQuestion;
@@ -7,9 +9,10 @@ interface Props {
     onChange: (ans: Partial<UserAnswerState>) => void;
     readOnly?: boolean;
     showResult?: boolean;
+    app: App;
 }
 
-export const FillInBlank: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult }) => {
+export const FillInBlank: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult, app }) => {
     // Current answers, default to empty strings
     const values = answer.textInputs || new Array(question.correctAnswers.length).fill("");
 
@@ -25,7 +28,12 @@ export const FillInBlank: React.FC<Props> = ({ question, answer, onChange, readO
                 {question.segments.map((seg, idx) => {
                     return (
                         <React.Fragment key={idx}>
-                            <span>{seg}</span>
+                            <MarkdownContent
+                                app={app}
+                                content={seg}
+                                tagName="span"
+                                className="inline-markdown"
+                            />
                             {idx < question.correctAnswers.length && (
                                 <span style={{ position: 'relative', display: 'inline-block' }}>
                                     <input
@@ -73,3 +81,4 @@ export const FillInBlank: React.FC<Props> = ({ question, answer, onChange, readO
         </div>
     );
 };
+

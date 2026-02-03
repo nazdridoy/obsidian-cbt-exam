@@ -1,5 +1,7 @@
 import * as React from "react";
+import { App } from "obsidian";
 import { SelectAllQuestion, UserAnswerState } from "../../types/types";
+import { MarkdownContent } from "../components/MarkdownContent";
 
 interface Props {
     question: SelectAllQuestion;
@@ -7,9 +9,10 @@ interface Props {
     onChange: (ans: Partial<UserAnswerState>) => void;
     readOnly?: boolean;
     showResult?: boolean;
+    app: App;
 }
 
-export const SelectAll: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult }) => {
+export const SelectAll: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult, app }) => {
     const safeAnswer = answer ?? { status: 'UNANSWERED', questionId: '' };
     const selectedIndices = new Set(safeAnswer.selectedOptionIndices || []);
 
@@ -23,48 +26,37 @@ export const SelectAll: React.FC<Props> = ({ question, answer, onChange, readOnl
 
     return (
         <div className="question-sata">
-            <div className="question-text" style={{ marginBottom: '1rem', whiteSpace: 'pre-wrap' }}>
-                {question.questionText}
+            <div className="question-text" style={{ marginBottom: '1rem' }}>
+                <MarkdownContent app={app} content={question.questionText} />
                 <div style={{ fontSize: '0.8em', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
                     (Select all that apply)
                 </div>
             </div>
-            <div className="options-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="options-list">
                 {question.options.map((opt, idx) => {
                     const isSelected = selectedIndices.has(idx);
                     const isCorrect = question.correctOptionIndices.includes(idx);
 
-                    let borderColor = 'var(--background-modifier-border)';
-                    let bgColor = 'transparent';
+                    let statusClass = "";
 
                     if (showResult) {
                         // Correct option: Green
                         if (isCorrect) {
-                            borderColor = 'var(--color-green)';
-                            bgColor = 'rgba(var(--color-green-rgb), 0.1)';
+                            statusClass = "correct";
                         }
                         // Selected but wrong: Red
                         else if (isSelected && !isCorrect) {
-                            borderColor = 'var(--color-red)';
-                            bgColor = 'rgba(var(--color-red-rgb), 0.1)';
+                            statusClass = "incorrect";
                         }
                     } else if (isSelected) {
-                        borderColor = 'var(--interactive-accent)';
-                        bgColor = 'var(--interactive-accent-opacity)';
+                        statusClass = "selected";
                     }
 
                     return (
                         <div
                             key={idx}
-                            className={`option-item ${isSelected ? 'selected' : ''}`}
+                            className={`option-item ${statusClass}`}
                             onClick={() => toggle(idx)}
-                            style={{
-                                padding: '1rem',
-                                border: `1px solid ${borderColor}`,
-                                borderRadius: '6px',
-                                cursor: (readOnly || showResult) ? 'default' : 'pointer',
-                                backgroundColor: bgColor
-                            }}
                         >
                             <input
                                 type="checkbox"
@@ -72,7 +64,9 @@ export const SelectAll: React.FC<Props> = ({ question, answer, onChange, readOnl
                                 readOnly
                                 style={{ marginRight: '0.5rem' }}
                             />
-                            {opt}
+                            <div style={{ flex: 1 }}>
+                                <MarkdownContent app={app} content={opt} />
+                            </div>
                         </div>
                     );
                 })}
@@ -80,3 +74,4 @@ export const SelectAll: React.FC<Props> = ({ question, answer, onChange, readOnl
         </div>
     );
 };
+

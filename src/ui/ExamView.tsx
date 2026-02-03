@@ -79,6 +79,8 @@ export class ExamView extends TextFileView {
             this.root.render(
                 <ExamUI
                     definition={this.definition}
+                    app={this.app}
+                    sourcePath={this.file?.path || ""}
                     onClose={async () => {
                         // Switch back to markdown view
                         if (this.file) {

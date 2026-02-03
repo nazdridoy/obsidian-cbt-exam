@@ -1,5 +1,7 @@
 import * as React from "react";
+import { App } from "obsidian";
 import { TrueFalseQuestion, UserAnswerState } from "../../types/types";
+import { MarkdownContent } from "../components/MarkdownContent";
 
 interface Props {
     question: TrueFalseQuestion;
@@ -7,48 +9,41 @@ interface Props {
     onChange: (ans: Partial<UserAnswerState>) => void;
     readOnly?: boolean;
     showResult?: boolean;
+    app: App;
 }
 
-export const TrueFalse: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult }) => {
+export const TrueFalse: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult, app }) => {
     return (
         <div className="question-tf">
-            <div className="question-text" style={{ marginBottom: '1rem', whiteSpace: 'pre-wrap' }}>
-                {question.questionText}
+            <div className="question-text" style={{ marginBottom: '1rem' }}>
+                <MarkdownContent app={app} content={question.questionText} />
             </div>
-            <div className="options-list" style={{ display: 'flex', gap: '1rem' }}>
+            <div className="options-list">
                 {[true, false].map((val) => {
                     const isSelected = answer.booleanSelection === val;
                     const isCorrect = question.isTrue === val;
 
-                    let borderColor = 'var(--background-modifier-border)';
-                    let bgColor = 'transparent';
+                    let statusClass = "";
 
                     if (showResult) {
                         if (isCorrect) {
-                            borderColor = 'var(--color-green)';
-                            bgColor = 'rgba(var(--color-green-rgb), 0.1)';
+                            statusClass = "correct";
                         } else if (isSelected && !isCorrect) {
-                            borderColor = 'var(--color-red)';
-                            bgColor = 'rgba(var(--color-red-rgb), 0.1)';
+                            statusClass = "incorrect";
                         }
                     } else if (isSelected) {
-                        borderColor = 'var(--interactive-accent)';
-                        bgColor = 'var(--interactive-accent-opacity)';
+                        statusClass = "selected";
                     }
 
                     return (
                         <div
                             key={val.toString()}
-                            className={`option-item ${isSelected ? 'selected' : ''}`}
+                            className={`option-item ${statusClass}`}
                             onClick={() => !readOnly && !showResult && onChange({ booleanSelection: val })}
                             style={{
                                 flex: 1,
-                                padding: '1rem',
                                 textAlign: 'center',
-                                border: `1px solid ${borderColor}`,
-                                borderRadius: '6px',
-                                cursor: (readOnly || showResult) ? 'default' : 'pointer',
-                                backgroundColor: bgColor
+                                display: 'block' // Since base option-item is flex
                             }}
                         >
                             {val ? "True" : "False"}
@@ -59,3 +54,4 @@ export const TrueFalse: React.FC<Props> = ({ question, answer, onChange, readOnl
         </div>
     );
 };
+
