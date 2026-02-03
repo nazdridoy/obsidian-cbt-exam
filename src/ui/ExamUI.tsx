@@ -103,6 +103,13 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
                         </button>
                     )}
                     <TimerDisplay seconds={session.timeLimitSeconds} onExpire={handleSubmit} />
+                    <button
+                        aria-label="Quit Exam"
+                        onClick={onClose}
+                        style={{ backgroundColor: 'var(--color-red)', color: 'white' }}
+                    >
+                        Quit
+                    </button>
                 </div>
             </div>
 
