@@ -70,11 +70,11 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
         // Actually setIndex just copies this.session. So if we updated this.session.status, setIndex will return it correctly.
         setSession(managerRef.current.setIndex(0));
 
-        setResult(null); // Clear result to show question view
+        // We keep the result state so we can use it for coloring navigation
     };
 
     // View Switching
-    if (result) {
+    if (result && session.status !== 'REVIEW') {
         return <ResultsView result={result} onClose={onClose} onReview={handleReview} />;
     }
 
@@ -139,7 +139,18 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
                     {isReviewMode ? (
                         <button
                             className="mod-cta"
-                            onClick={() => setResult(ScoringEngine.calculateScore(session))} // Go back to results
+                            onClick={() => {
+                                // To go back to results, we don't need to recalculate score if result is already there.
+                                // But if we want to ensure freshness or simple flow:
+                                setResult(ScoringEngine.calculateScore(session));
+                                // And we need to exit review mode? 
+                                // Actually, ResultsView is shown if 'result' is there AND status != REVIEW.
+                                // So we need to reset status to something else (e.g. SUBMITTED)?
+                                // Let's just create a new session state that is SUBMITTED or IDLE?
+                                // Or simpler: Just un-set review mode to SUBMITTED?
+                                managerRef.current.setStatus('SUBMITTED');
+                                setSession(managerRef.current.getSession());
+                            }}
                         >
                             Exit review
                         </button>
@@ -167,6 +178,7 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
                         answers={session.answers}
                         questionIds={definition.questions.map(q => q.id)}
                         onNavigate={handleNavigate}
+                        examResult={result}
                     />
                 </div>
             </div>
