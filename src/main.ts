@@ -1,9 +1,14 @@
-import { Plugin, Notice, TFile } from "obsidian";
+import { Plugin, Notice, TFile, WorkspaceLeaf } from "obsidian";
 import { FlashQuizParser } from "./parser/flashquizParser";
-import { ExamModal } from "./ui/ExamModal";
+import { ExamView, EXAM_VIEW_TYPE } from "./ui/ExamView";
 
 export default class CBTExamPlugin extends Plugin {
     onload() {
+        this.registerView(
+            EXAM_VIEW_TYPE,
+            (leaf: WorkspaceLeaf) => new ExamView(leaf)
+        );
+
         // Register command to start exam
         this.addCommand({
             id: 'start-exam',
@@ -50,12 +55,18 @@ export default class CBTExamPlugin extends Plugin {
                 return;
             }
 
-            // Open Modal
-            new ExamModal(this.app, examDefinition).open();
+            // Open View
+            const leaf = this.app.workspace.getLeaf(false);
+            await leaf.setViewState({
+                type: EXAM_VIEW_TYPE,
+                active: true,
+                state: { file: file.path }
+            });
 
         } catch (e) {
             console.error("Failed to start exam:", e);
             new Notice("Failed to start exam. Check console for details.");
+            // If validation fails, stay on markdown view
         }
     }
 

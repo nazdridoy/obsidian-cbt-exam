@@ -1,6 +1,4 @@
-import { App, Modal } from "obsidian";
 import * as React from "react";
-import * as ReactDOM from "react-dom/client";
 import { ExamDefinition, ExamSession, UserAnswerState, ExamResult, Question } from "../types/types";
 import { ExamSessionManager } from "../exam/examSession";
 import { ScoringEngine } from "../exam/scoringEngine";
@@ -16,41 +14,7 @@ import { Matching } from "./questions/Matching";
 import { FillInBlank } from "./questions/FillInBlank";
 import { ShortLongAnswer } from "./questions/ShortLongAnswer";
 
-export class ExamModal extends Modal {
-    private definition: ExamDefinition;
-    private root: ReactDOM.Root | null = null;
-
-    constructor(app: App, definition: ExamDefinition) {
-        super(app);
-        this.definition = definition;
-    }
-
-    onOpen() {
-        // Add custom class to the modal wrapper for sizing
-        this.modalEl.addClass("mod-cbt-exam");
-
-        const { contentEl } = this;
-        contentEl.empty();
-        contentEl.addClass("exam-modal-container"); // for flex layout
-
-        // Root container for React
-        const reactContainer = contentEl.createDiv();
-        reactContainer.addClass("exam-react-container");
-
-        this.root = ReactDOM.createRoot(reactContainer);
-        this.root.render(<ExamUI definition={this.definition} onClose={() => this.close()} />);
-    }
-
-    onClose() {
-        if (this.root) {
-            this.root.unmount();
-        }
-        const { contentEl } = this;
-        contentEl.empty();
-    }
-}
-
-const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void }> = ({ definition, onClose }) => {
+export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void }> = ({ definition, onClose }) => {
     // We use a ref to hold the manager, but state to force re-renders
     const managerRef = React.useRef(new ExamSessionManager(definition));
     const [session, setSession] = React.useState<ExamSession>(managerRef.current.getSession());
