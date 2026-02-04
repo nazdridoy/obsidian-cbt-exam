@@ -12,17 +12,56 @@ An [Obsidian](https://obsidian.md/) plugin for creating interactive, timed exams
 - **Review Mode**: Review your results after submission with color-coded navigation (green/red) to quickly identify correct and incorrect answers.
 - **Shuffle & Timer**: Configurable time limits and question/option shuffling managed via note frontmatter.
 
-## Supported Question Types
+## YAML Frontmatter
 
-| Type | Marker | Description |
-|------|--------|-------------|
-| **Multiple Choice** | `@mc` | Single-answer formatted options |
-| **Select All** | `@sata` | Multiple correct options |
-| **True/False** | `@tf` | Boolean choice |
-| **Fill in the Blank** | `@fib` | Inline text inputs |
-| **Matching** | `@match` | Pair items from two columns |
-| **Short Answer** | `@sa` | Single-line text response |
-| **Long Answer** | `@la` | Multi-line text response |
+Configure quiz settings at the beginning of the file using YAML frontmatter.
+
+| Option         | Type    | Description                                      | Example                    |
+| -------------- | ------- | ------------------------------------------------ | -------------------------- |
+| `quiz-title`   | String  | The title of the quiz                            | `quiz-title: "My Quiz"`    |
+| `time-limit`   | Number  | Time limit for the quiz in minutes               | `time-limit: 30`           |
+| `pass-score`   | Number  | Minimum percentage required to pass              | `pass-score: 70`           |
+| `shuffle`      | Boolean | Whether to shuffle the question order            | `shuffle: true`            |
+| `show-answer`  | Boolean | Whether to show answers after quiz completion    | `show-answer: true`        |
+
+**Example:**
+```yaml
+---
+quiz-title: "Science Quiz"
+time-limit: 15
+pass-score: 80
+shuffle: true
+show-answer: true
+---
+```
+
+## Question Syntax
+
+Questions are defined using specific markers followed by the question text and answer details.
+
+### Markers
+
+| Marker   | Type                  | Answer Format        |
+| -------- | --------------------- | -------------------- |
+| `@mc`    | Multiple Choice       | `= b`                |
+| `@sata`  | Select All That Apply | `= a, c, e`          |
+| `@tf`    | True/False            | `= true` / `= false` |
+| `@fib`   | Fill in the Blank     | `= answer1, answer2` |
+| `@match` | Matching              | Left \| Right pairs  |
+| `@sa`    | Short Answer          | `= text`             |
+| `@la`    | Long Answer           | `= text`             |
+
+### Standard Rules
+
+1.  **Marker**: Start a question with `@type` (e.g., `@mc`).
+2.  **Options**: Use `a)`, `b)`, `c)`... for choices (lowercase letters followed by a parenthesis).
+3.  **Answer**: Use the `=` prefix followed by a space (e.g., `= a`).
+4.  **Multiple Answers**: Separate multiple answers with a comma and space (e.g., `= a, c`).
+5.  **Question Separator**: Questions should be separated by a blank line or the next marker.
+
+## Demo
+
+https://github.com/user-attachments/assets/7c204aa9-5441-467b-952e-5311a269e0c3
 
 ---
 
@@ -70,7 +109,7 @@ d) Neon
 ```
 
 > [!TIP]
-> See [ExampleQuiz.md](./ExampleQuiz.md) for a comprehensive list of all supported question types and syntax.
+> See [FLASHQUIZ_SPEC.md](./FLASHQUIZ_SPEC.md) for full syntax documentation and [ExampleQuiz.md](./ExampleQuiz.md) for a comprehensive example file.
 
 ### 2. Start the Exam
 - **Ribbon**: Click the graduation cap icon 🎓 in the left ribbon.
