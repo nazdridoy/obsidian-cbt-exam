@@ -1,7 +1,7 @@
 {
 	"id": "cbt-exam",
 	"name": "CBT Exam Simulator",
-	"version": "1.1.2",
+	"version": "1.2.0",
 	"minAppVersion": "0.15.0",
 	"description": "A robust, offline-first CBT exam simulator using FlashQuiz format.",
 	"author": "nazdridoy",
