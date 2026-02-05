@@ -6,10 +6,13 @@ An [Obsidian](https://obsidian.md/) plugin for creating interactive, timed exams
 
 ## Features
 
-- **Integrated Exam View**: Runs as a native workspace tab with an integrated timer and question navigator.
-- **Markdown & LaTeX Support**: Full support for standard Obsidian Markdown and LaTeX (MathJax) in questions and options.
+- **integrated Exam View**: Runs as a native workspace tab with an integrated timer and question navigator.
 - **7 Question Types**: Supports Multiple Choice, Select All (SATA), True/False, Fill in the Blank, Matching, and Short/Long answers.
-- **Review Mode**: Review your results after submission with color-coded navigation (green/red) to quickly identify correct and incorrect answers.
+- **Mark for Review**: Flag questions during the exam with a yellow marker to return to them later.
+- **Enhanced Results Dashboard**: Detailed statistics including accuracy, total score, and time taken.
+- **Retake Exam**: Quickly restart an exam after viewing your results.
+- **Review Mode**: Review your results with color-coded navigation (green/red) and persistent marks.
+- **Markdown & LaTeX Support**: Full support for standard Obsidian Markdown and LaTeX (MathJax) in questions and options.
 - **Shuffle & Timer**: Configurable time limits and question/option shuffling managed via note frontmatter.
 
 ## Demo
@@ -122,7 +125,10 @@ d) Neon
 - Click **Submit** (or wait for the timer) to view results.
 
 ### 4. Results & Review
-The results view shows your score and pass/fail status. In **Review Mode**, the question navigator is color-coded to show which questions you got right (green) or wrong (red).
+The results dashboard provides a comprehensive breakdown of your performance, including accuracy percentage, points, and time taken. You can:
+- **Review Answers**: Analyze your performance question-by-question (persistent marks and color-coding help you focus on areas for improvement).
+- **Retake Exam**: Immediately restart the exam for another attempt.
+- **Close Exam**: Return to your Obsidian vault.
 
 ---
 
