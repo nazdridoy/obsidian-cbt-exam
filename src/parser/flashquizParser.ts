@@ -140,17 +140,55 @@ export class FlashQuizParser {
             return orderA - orderB;
         });
 
+        // 5. Apply range filter if present
+        const finalQuestions = metadata.examRange
+            ? this.applyRangeFilter(questions, metadata.examRange)
+            : questions;
+
         return {
             title: metadata.title || 'Untitled Exam',
             sourceFile: filePath,
-            questions: questions,
+            questions: finalQuestions,
             metadata: {
                 timeLimitMinutes: metadata.timeLimit,
                 passThreshold: metadata.passThreshold,
                 shuffleQuestions: metadata.shuffle,
-                showAnswer: metadata.showAnswer
+                showAnswer: metadata.showAnswer,
+                questionRange: metadata.examRange
             }
         };
+    }
+
+    private static applyRangeFilter(questions: Question[], rangeStr: string): Question[] {
+        // Clean range string
+        const range = rangeStr.trim();
+        const parts = range.split(/[-:]/);
+
+        let start = -Infinity;
+        let end = Infinity;
+
+        if (parts.length === 1) {
+            const val = parseInt(parts[0]);
+            if (isNaN(val)) return questions;
+
+            if (range.endsWith('-') || range.endsWith(':')) {
+                start = val;
+            } else if (range.startsWith('-') || range.startsWith(':')) {
+                end = val;
+            } else {
+                start = end = val;
+            }
+        } else {
+            const s = parseInt(parts[0]);
+            const e = parseInt(parts[1]);
+            if (!isNaN(s)) start = s;
+            if (!isNaN(e)) end = e;
+        }
+
+        return questions.filter(q => {
+            if (q.order === undefined) return true;
+            return q.order >= start && q.order <= end;
+        });
     }
 
     private static mapType(marker: string): QuestionType | null {
@@ -200,6 +238,9 @@ export class FlashQuizParser {
 
         const showAnswerMatch = yaml.match(/show-answer:\s*(true|false)/);
         if (showAnswerMatch) result.showAnswer = showAnswerMatch[1] === 'true';
+
+        const rangeMatch = yaml.match(/exam-range:\s*(.*)/);
+        if (rangeMatch) result.examRange = rangeMatch[1].replace(/['"]/g, '').trim();
 
         return result;
     }

@@ -64,6 +64,7 @@ export interface ExamDefinition {
         passThreshold?: number; // 0.0 - 1.0 (default 0.70)
         shuffleQuestions?: boolean;
         showAnswer?: boolean;
+        questionRange?: string; // e.g. "1-50", "100-", "-20"
     };
 }
 
@@ -121,5 +122,6 @@ export interface FrontmatterResult {
     passThreshold?: number;
     shuffle?: boolean;
     showAnswer?: boolean;
+    examRange?: string;
 }
 

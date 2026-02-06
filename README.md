@@ -31,6 +31,14 @@ Configure quiz settings at the beginning of the file using YAML frontmatter.
 | `pass-score`   | Number  | Minimum percentage required to pass              | `pass-score: 70`           |
 | `shuffle`      | Boolean | Whether to shuffle the question order            | `shuffle: true`            |
 | `show-answer`  | Boolean | Whether to show answers during the quiz (flashcard mode)   | `show-answer: true`        |
+| `exam-range`   | String  | Filter questions by sequence number (e.g., `1-50`)        | `exam-range: -`            |
+
+> [!NOTE]
+> **Partial Exams (`exam-range`)**: You can take a subset of questions by specifying a range based on their sequence numbers (e.g., `1)`, `2.`).
+> - `10-20`: Questions 10 through 20.
+> - `50-`: Question 50 to the end.
+> - `-30`: Start to question 30.
+> - `-`: Full exam (default).
 
 **Example:**
 ```yaml
@@ -40,6 +48,7 @@ time-limit: 15
 pass-score: 80
 shuffle: true
 show-answer: true
+exam-range: -
 ---
 ```
 
@@ -93,6 +102,7 @@ quiz-title: "Sample Quiz"
 time-limit: 30
 pass-score: 70
 shuffle: true
+exam-range: -
 ---
 
 # Physics Quiz (@mc)
