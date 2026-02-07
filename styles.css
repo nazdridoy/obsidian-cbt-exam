@@ -866,7 +866,61 @@
 }
 
 /* =========================================================================
-   7. UTILITY CLASSES
+   7. CUSTOM MODALS (CONFIRM/ERROR)
+   ========================================================================= */
+
+.cbt-confirm-modal {
+    max-width: 500px !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.cbt-confirm-modal .modal-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-error);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.cbt-confirm-modal .modal-message-container {
+    margin-bottom: 1.5rem;
+}
+
+.cbt-confirm-modal .modal-text {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-normal);
+}
+
+.cbt-confirm-modal .modal-error-item {
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-style: italic;
+    list-style-type: none;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.cbt-confirm-modal .modal-error-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--text-error);
+    font-weight: bold;
+    font-style: normal;
+}
+
+.cbt-confirm-modal .u-flex-justify-end {
+    border-top: 1px solid var(--background-modifier-border);
+    padding-top: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* =========================================================================
+   8. UTILITY CLASSES
    ========================================================================= */
 
 .u-flex {

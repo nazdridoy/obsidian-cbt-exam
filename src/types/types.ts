@@ -59,12 +59,14 @@ export interface ExamDefinition {
     title: string;
     sourceFile: string; // Path to .md file
     questions: Question[];
+    fullQuestions?: Question[]; // Original unfiltered list
     metadata: {
         timeLimitMinutes?: number; // 0 = unlimited
         passThreshold?: number; // 0.0 - 1.0 (default 0.70)
         shuffleQuestions?: boolean;
         showAnswer?: boolean;
         questionRange?: string; // e.g. "1-50", "100-", "-20"
+        rangeErrors?: string[];
     };
 }
 
@@ -123,5 +125,6 @@ export interface FrontmatterResult {
     shuffle?: boolean;
     showAnswer?: boolean;
     examRange?: string;
+    rangeErrors?: string[];
 }
 

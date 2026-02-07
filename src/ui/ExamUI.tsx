@@ -18,6 +18,7 @@ import { FillInBlank } from "./questions/FillInBlank";
 import { ShortLongAnswer } from "./questions/ShortLongAnswer";
 import { HistoryView } from "./HistoryView";
 import { LandingView } from "./LandingView";
+import { ConfirmModal } from "./ConfirmModal";
 
 export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void, app: App, sourcePath?: string, settings: CBTSettings }> = ({ definition, onClose, app, sourcePath, settings }) => {
     // We use a ref to hold the manager, but state to force re-renders
@@ -49,6 +50,37 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
         const s = managerRef.current.start();
         setSession(s);
     }, []);
+
+    const handleStartWithValidation = React.useCallback(() => {
+        const errors = definition.metadata.rangeErrors;
+        if (errors && errors.length > 0) {
+            const message = "The specified exam-range is invalid:\n\n" +
+                errors.map(e => "• " + e).join("\n") +
+                "\n\nWould you like to launch the FULL exam instead?";
+
+            const modal = new ConfirmModal(
+                app,
+                message,
+                () => {
+                    // Start with full questions
+                    const fullDefinition = {
+                        ...definition,
+                        questions: definition.fullQuestions || definition.questions
+                    };
+                    managerRef.current = new ExamSessionManager(fullDefinition);
+                    const s = managerRef.current.start();
+                    setSession(s);
+                },
+                () => {
+                    // Do nothing, stay on landing page
+                },
+                "Exam range error"
+            );
+            modal.open();
+        } else {
+            handleStart();
+        }
+    }, [definition, app, handleStart]);
 
     React.useEffect(() => {
         console.debug("ExamUI Mounted. Definition:", definition);
@@ -110,7 +142,7 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
         return (
             <LandingView
                 definition={definition}
-                onStart={handleStart}
+                onStart={handleStartWithValidation}
                 onViewHistory={() => setShowHistory(true)}
                 onClose={onClose}
             />
@@ -138,14 +170,16 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
     // Determine if we should show the result/answer for this question
     // in REVIEW mode, OR if the user clicked "Show Answer" (only allowed if not in review and enabled in metadata)
     const isReviewMode = session.status === 'REVIEW';
-    const canShowAnswer = !isReviewMode && definition.metadata.showAnswer;
+    const canShowAnswer = !isReviewMode && session.definition.metadata.showAnswer;
     const shouldShowResult = isReviewMode || showCurrentAnswer;
+
+    const currentDefinition = session.definition;
 
     return (
         <div className="exam-ui-layout">
             {/* Header */}
             <div className="exam-header">
-                <div className="exam-title">{definition.title}</div>
+                <div className="exam-title">{currentDefinition.title}</div>
 
                 <div className="u-flex u-flex-center u-flex-gap-1">
                     {/* Show Answer Toggle - Only if enabled and not in review */}
@@ -173,11 +207,11 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
 
             {/* Main Content */}
             <div className="exam-body">
-                <ValidationSummary questions={definition.questions} />
+                <ValidationSummary questions={currentDefinition.questions} />
 
                 <div className="question-count-container u-flex u-flex-center u-flex-justify-between">
                     <div className="question-count">
-                        Question {session.currentQuestionIndex + 1} of {definition.questions.length}
+                        Question {session.currentQuestionIndex + 1} of {currentDefinition.questions.length}
                     </div>
                     <div
                         className={`question-mark-toggle ${currentAns?.isMarked ? 'is-marked' : ''} ${isReviewMode ? 'u-cursor-default' : ''}`}
@@ -245,7 +279,7 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
 
                     <button
                         onClick={() => handleNavigate(session.currentQuestionIndex + 1)}
-                        disabled={session.currentQuestionIndex === definition.questions.length - 1}
+                        disabled={session.currentQuestionIndex === currentDefinition.questions.length - 1}
                     >
                         Next
                     </button>
@@ -253,10 +287,10 @@ export const ExamUI: React.FC<{ definition: ExamDefinition, onClose: () => void,
 
                 <div className="exam-nav-container">
                     <QuestionNav
-                        total={definition.questions.length}
+                        total={currentDefinition.questions.length}
                         current={session.currentQuestionIndex}
                         answers={session.answers}
-                        questionIds={definition.questions.map(q => q.id)}
+                        questionIds={currentDefinition.questions.map(q => q.id)}
                         onNavigate={handleNavigate}
                         examResult={result}
                     />

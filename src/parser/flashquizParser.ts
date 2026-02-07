@@ -141,54 +141,131 @@ export class FlashQuizParser {
         });
 
         // 5. Apply range filter if present
-        const finalQuestions = metadata.examRange
-            ? this.applyRangeFilter(questions, metadata.examRange)
-            : questions;
+        let finalQuestions = questions;
+        const rangeErrors: string[] = [];
+
+        if (metadata.examRange && metadata.examRange !== "-") {
+            const result = this.applyRangeFilter(questions, metadata.examRange);
+            finalQuestions = result.filtered;
+            rangeErrors.push(...result.errors);
+        }
 
         return {
             title: metadata.title || 'Untitled Exam',
             sourceFile: filePath,
             questions: finalQuestions,
+            fullQuestions: questions,
             metadata: {
                 timeLimitMinutes: metadata.timeLimit,
                 passThreshold: metadata.passThreshold,
                 shuffleQuestions: metadata.shuffle,
                 showAnswer: metadata.showAnswer,
-                questionRange: metadata.examRange
+                questionRange: metadata.examRange,
+                rangeErrors: rangeErrors.length > 0 ? rangeErrors : undefined
             }
         };
     }
 
-    private static applyRangeFilter(questions: Question[], rangeStr: string): Question[] {
-        // Clean range string
-        const range = rangeStr.trim();
-        const parts = range.split(/[-:]/);
+    private static applyRangeFilter(questions: Question[], rangeStr: string): { filtered: Question[], errors: string[] } {
+        const errors: string[] = [];
+        const segments = rangeStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
-        let start = -Infinity;
-        let end = Infinity;
+        const includedIndices = new Set<number>();
+        let hasValidSegment = false;
+        let openStartValue: number | null = null;
+        let openEndValue: number | null = null;
 
-        if (parts.length === 1) {
-            const val = parseInt(parts[0]);
-            if (isNaN(val)) return questions;
-
-            if (range.endsWith('-') || range.endsWith(':')) {
-                start = val;
-            } else if (range.startsWith('-') || range.startsWith(':')) {
-                end = val;
-            } else {
-                start = end = val;
+        for (const segment of segments) {
+            // Check for invalid characters (only digits and - allowed)
+            if (/[^0-9-]/.test(segment)) {
+                errors.push(`Invalid range segment '${segment}'. Only numbers and '-' are allowed.`);
+                continue;
             }
-        } else {
-            const s = parseInt(parts[0]);
-            const e = parseInt(parts[1]);
-            if (!isNaN(s)) start = s;
-            if (!isNaN(e)) end = e;
+
+            const parts = segment.split('-');
+
+            if (parts.length === 1) {
+                // Single value: "10"
+                const val = parseInt(parts[0]);
+                if (isNaN(val)) {
+                    errors.push(`Invalid number '${parts[0]}' in segment '${segment}'.`);
+                    continue;
+                }
+                includedIndices.add(val);
+                hasValidSegment = true;
+            } else if (parts.length === 2) {
+                const sStr = parts[0].trim();
+                const eStr = parts[1].trim();
+
+                if (sStr === "" && eStr === "") {
+                    errors.push(`Invalid range format '${segment}'.`);
+                    continue;
+                }
+
+                if (sStr === "") {
+                    // Open start: "-10"
+                    if (openStartValue !== null) {
+                        errors.push(`Multiple open-start ranges found ('-${openStartValue}' and '${segment}').`);
+                    }
+                    openStartValue = parseInt(eStr);
+                    if (isNaN(openStartValue)) {
+                        errors.push(`Invalid number '${eStr}' in segment '${segment}'.`);
+                        openStartValue = null;
+                    } else {
+                        hasValidSegment = true;
+                    }
+                } else if (eStr === "") {
+                    // Open end: "10-"
+                    if (openEndValue !== null) {
+                        errors.push(`Multiple open-end ranges found ('${openEndValue}-' and '${segment}').`);
+                    }
+                    openEndValue = parseInt(sStr);
+                    if (isNaN(openEndValue)) {
+                        errors.push(`Invalid number '${sStr}' in segment '${segment}'.`);
+                        openEndValue = null;
+                    } else {
+                        hasValidSegment = true;
+                    }
+                } else {
+                    // Closed range: "10-20"
+                    const start = parseInt(sStr);
+                    const end = parseInt(eStr);
+
+                    if (isNaN(start) || isNaN(end)) {
+                        errors.push(`Invalid numbers in range '${segment}'.`);
+                        continue;
+                    }
+
+                    if (start > end) {
+                        errors.push(`Invalid range '${segment}' (start > end).`);
+                        continue;
+                    }
+
+                    for (let i = start; i <= end; i++) {
+                        includedIndices.add(i);
+                    }
+                    hasValidSegment = true;
+                }
+            } else {
+                // More than one dash: "1-5-10"
+                errors.push(`Invalid range format '${segment}'.`);
+            }
         }
 
-        return questions.filter(q => {
+        if (!hasValidSegment && segments.length > 0) {
+            errors.push(`No valid range segments found in '${rangeStr}'. Using full exam.`);
+            return { filtered: questions, errors };
+        }
+
+        const filtered = questions.filter(q => {
             if (q.order === undefined) return true;
-            return q.order >= start && q.order <= end;
+            if (includedIndices.has(q.order)) return true;
+            if (openStartValue !== null && q.order <= openStartValue) return true;
+            if (openEndValue !== null && q.order >= openEndValue) return true;
+            return false;
         });
+
+        return { filtered, errors };
     }
 
     private static mapType(marker: string): QuestionType | null {

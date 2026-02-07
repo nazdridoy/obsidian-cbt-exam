@@ -57,18 +57,38 @@ Questions are defined using specific markers followed by the question text and a
 
 ---
 
-## Partial Exam (Question Range)
+## Exam Range Specification
 
-You can take a subset of the exam by specifying the `exam-range` in the frontmatter. Questions are filtered based on their sequence number (e.g., `1)`, `2.`).
+You can filter which questions are included in the exam by specifying the `exam-range` in the frontmatter. This allows for creating partial exams or studying specific sections.
+
+### Syntax
+
+The `exam-range` string supports a comma-separated list of segments. Each segment can be a single number or a range.
 
 | Format | Description |
 | --- | --- |
-| `"1-50"` | Include questions numbered 1 through 50 |
-| `"100-"` | Include questions numbered 100 to the end |
-| `"-20"` | Include questions from the start up to number 20 |
-| `"10"` | Include only question number 10 |
-| `"-"` | Full exam (default) |
-| `"25:75"` | Colon separator is also supported |
+| `"-"` | **Full Exam** (Default). Includes all questions. |
+| `"1-50"` | **Closed Range**. Includes questions 1 through 50. |
+| `"100-"` | **Open-Ended**. Includes questions 100 to the end. |
+| `"-20"` | **Open-Start**. Includes questions from the start up to 20. |
+| `"10"` | **Single Question**. Includes only question number 10. |
+| `"1-10, 20-30"` | **Complex Range**. Multiple segments separated by commas. |
+
+**Example:**
+`exam-range: "-5, 10, 20-30, 50-"`
+This will include:
+- Questions 1 through 5
+- Question 10
+- Questions 20 through 30
+- Question 50 to the end
+
+### Validation Rules
+
+To ensure clarity, the parser enforces strict validation:
+1.  **Separators**: Segments must be separated by commas (`,`). Ranges must be defined using a hyphen (`-`).
+2.  **Numeric Only**: Only digits and the hyphen are allowed (no letters or other symbols).
+3.  **Logical Ranges**: For closed ranges (`start-end`), `start` must be less than or equal to `end`.
+4.  **Strict Error Handling**: If any part of the range string is invalid, the **entire filter is rejected**. You will be prompted to launch the full exam instead.
 
 ---
 
