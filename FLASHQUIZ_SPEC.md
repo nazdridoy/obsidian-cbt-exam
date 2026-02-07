@@ -13,7 +13,7 @@ You can configure the quiz settings at the beginning of the file using YAML fron
 | `pass-score`   | Number  | Minimum percentage required to pass              | `pass-score: 70`           |
 | `shuffle`      | Boolean | Whether to shuffle the question order            | `shuffle: true`            |
 | `show-answer`  | Boolean | Whether to show answers during the quiz (flashcard mode)   | `show-answer: true`        |
-| `exam-range`   | String  | Take a partial exam (use `-` for full exam)      | `exam-range: -`            |
+| `exam-range`   | String  | Take a partial exam (use `-` for full exam)      | `exam-range: "-"`            |
 
 **Example:**
 ```yaml
@@ -23,7 +23,7 @@ time-limit: 15
 pass-score: 80
 shuffle: true
 show-answer: true
-exam-range: -
+exam-range: "-"
 ---
 ```
 
@@ -63,12 +63,12 @@ You can take a subset of the exam by specifying the `exam-range` in the frontmat
 
 | Format | Description |
 | --- | --- |
-| `1-50` | Include questions numbered 1 through 50 |
-| `100-` | Include questions numbered 100 to the end |
-| `-20` | Include questions from the start up to number 20 |
-| `10` | Include only question number 10 |
-| `-` | Full exam (default) |
-| `25:75` | Colon separator is also supported |
+| `"1-50"` | Include questions numbered 1 through 50 |
+| `"100-"` | Include questions numbered 100 to the end |
+| `"-20"` | Include questions from the start up to number 20 |
+| `"10"` | Include only question number 10 |
+| `"-"` | Full exam (default) |
+| `"25:75"` | Colon separator is also supported |
 
 ---
 

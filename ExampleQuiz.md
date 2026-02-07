@@ -4,7 +4,7 @@ time-limit: 30
 pass-score: 70
 shuffle: true
 show-answer: true
-exam-range: -
+exam-range: "-"
 ---
 
 # Multiple Choice (@mc)
