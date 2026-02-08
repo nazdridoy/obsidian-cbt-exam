@@ -18,8 +18,7 @@ An [Obsidian](https://obsidian.md/) plugin for creating interactive, timed exams
 
 ## Demo
 
-https://github.com/user-attachments/assets/405c2c6a-0246-4621-9c93-caa3e8b92a24
-
+https://github.com/user-attachments/assets/810d3c26-694d-4987-92ee-b320f5e56e43
 
 ## YAML Frontmatter
 
