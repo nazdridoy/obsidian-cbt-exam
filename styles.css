@@ -35,6 +35,29 @@
     flex-shrink: 0;
 }
 
+/* Mobile Exam Header Fixes */
+.is-mobile .exam-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-right: 1.5rem;
+    /* Reset extra padding used for desktop close button */
+}
+
+.is-mobile .exam-header>div {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.is-mobile .exam-title {
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
 .exam-body {
     flex: 1;
     padding: 2rem 2.5rem;
@@ -50,6 +73,13 @@
     flex-direction: column;
     flex-shrink: 0;
 }
+
+/* Mobile Fix: Increase bottom padding to avoid overlap with Obsidian mobile toolbar */
+.is-mobile .exam-footer {
+    padding-bottom: 6rem;
+}
+
+
 
 .exam-title {
     font-weight: bold;
@@ -710,6 +740,25 @@
     border: 1px solid var(--background-modifier-border);
 }
 
+/* Mobile Results View Fixes */
+.is-mobile .results-container {
+    padding-bottom: 6rem;
+    /* Ensure content clears the mobile toolbar */
+}
+
+.is-mobile .results-actions-container {
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.is-mobile .results-actions-container .button-large {
+    width: 100%;
+    min-width: unset;
+    /* Allow full width scaling */
+}
+
+
+
 .results-actions-container .button-large {
     min-width: 160px;
 }
@@ -864,6 +913,31 @@
     max-width: 320px;
     margin: 0 auto;
 }
+
+/* Mobile Landing View Fixes */
+.is-mobile .landing-container {
+    padding: 1rem;
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+.is-mobile .landing-content {
+    padding: 1.5rem;
+    max-width: 100%;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+}
+
+.is-mobile .landing-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.is-mobile .landing-actions {
+    max-width: 100%;
+}
+
+
 
 /* =========================================================================
    7. CUSTOM MODALS (CONFIRM/ERROR)
