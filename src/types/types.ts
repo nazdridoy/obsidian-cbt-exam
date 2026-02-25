@@ -66,6 +66,7 @@ export interface ExamDefinition {
         shuffleQuestions?: boolean;
         showAnswer?: boolean;
         questionRange?: string; // e.g. "1-50", "100-", "-20"
+        questionCount?: number;  // max questions to use (applied after range), e.g. 20
         rangeErrors?: string[];
     };
 }
@@ -146,6 +147,7 @@ export interface FrontmatterResult {
     shuffle?: boolean;
     showAnswer?: boolean;
     examRange?: string;
+    examCount?: number;
     rangeErrors?: string[];
 }
 
