@@ -46,7 +46,7 @@ Configure quiz settings at the beginning of the file using YAML frontmatter.
 > *Note: If any part of the range is invalid, you will be prompted to launch the full exam instead.*
 
 > [!NOTE]
-> **Question limit (`exam-count`)**: Use with `exam-range` to cap how many questions are used. The range is applied first, then the list is limited to the first `exam-count` questions. Example: `exam-range: "-"` and `exam-count: 20` uses 20 questions from the full exam (in order; use `shuffle: true` to randomize).
+> **Question limit (`exam-count`)**: Use with `exam-range` to cap how many questions are used. The range is applied first. **Without a range** (`exam-range: "-"` or omitted): randomly samples `exam-count` questions from the full exam. **With a range**: takes the first `exam-count` questions from the filtered range. Example: `exam-range: "-"` and `exam-count: 20` uses 20 randomly selected questions from the full exam.
 
 **Example:**
 ```yaml

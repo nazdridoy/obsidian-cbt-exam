@@ -150,9 +150,15 @@ export class FlashQuizParser {
             rangeErrors.push(...result.errors);
         }
 
-        // 6. Apply question count limit (after range); e.g. exam-range: "-", exam-count: 20 → 20 questions
+        // 6. Apply question count limit (after range)
+        // With range: take first n from the range. Without range: randomly sample n from all questions.
         if (metadata.examCount != null && metadata.examCount > 0 && finalQuestions.length > metadata.examCount) {
-            finalQuestions = finalQuestions.slice(0, metadata.examCount);
+            const hasRange = metadata.examRange && metadata.examRange !== "-";
+            if (hasRange) {
+                finalQuestions = finalQuestions.slice(0, metadata.examCount);
+            } else {
+                finalQuestions = this.randomSample(finalQuestions, metadata.examCount);
+            }
         }
 
         return {
@@ -170,6 +176,16 @@ export class FlashQuizParser {
                 rangeErrors: rangeErrors.length > 0 ? rangeErrors : undefined
             }
         };
+    }
+
+    /** Randomly sample n items from array (Fisher-Yates shuffle, then slice). */
+    private static randomSample<T>(arr: T[], n: number): T[] {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy.slice(0, n);
     }
 
     private static applyRangeFilter(questions: Question[], rangeStr: string): { filtered: Question[], errors: string[] } {
