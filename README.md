@@ -156,6 +156,12 @@ The results dashboard provides a breakdown of your performance: accuracy, points
 
 ---
 
+## Companion Tools
+
+- **[vce2flashquiz](https://github.com/nazdridoy/vce2flashquiz)**: A tool to convert VCE exam files directly into the Markdown format used by this plugin.
+
+---
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
