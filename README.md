@@ -86,6 +86,14 @@ Questions are defined using specific markers followed by the question text and a
 
 ## Installation
 
+### Using BRAT (Beta Reviewers Auto-update Tool)
+1. Install the **[BRAT](https://github.com/TfTHacker/obsidian42-brat)** plugin from the Community Plugins list.
+2. Enable the BRAT plugin in Settings.
+3. Go to BRAT settings and click on **Add Beta plugin**.
+4. Paste the repository URL: `https://github.com/nazdridoy/obsidian-cbt-exam`
+5. Click **Add Plugin**.
+6. Turn on **CBT Exam Simulator** in Settings > Community Plugins.
+
 ### Manual Installation
 1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/nazdridoy/obsidian-cbt-exam/releases).
 2. Create `cbt-exam` in your vault's `.obsidian/plugins/` directory.
