@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TimerController } from "../../exam/timerController";
 
 interface TimerProps {
@@ -9,6 +9,8 @@ interface TimerProps {
 
 export const TimerDisplay: React.FC<TimerProps> = ({ seconds, onExpire }) => {
     const [timeLeft, setTimeLeft] = useState(seconds);
+    const onExpireRef = useRef(onExpire);
+    onExpireRef.current = onExpire;
 
     useEffect(() => {
         if (seconds <= 0) return; // Unlimited time
@@ -16,12 +18,12 @@ export const TimerDisplay: React.FC<TimerProps> = ({ seconds, onExpire }) => {
         const timer = new TimerController(
             seconds,
             (remaining) => setTimeLeft(remaining),
-            onExpire
+            () => { onExpireRef.current(); }
         );
         timer.start();
 
         return () => timer.stop();
-    }, [seconds, onExpire]); // Restart if duration changes
+    }, [seconds]); // Only restart when exam duration changes (e.g. new exam), not on parent re-renders
 
     if (seconds <= 0) return <span>No Time Limit</span>;
 
