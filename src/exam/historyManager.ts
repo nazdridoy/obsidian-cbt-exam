@@ -199,7 +199,7 @@ ${sessionDetail}`;
                 // Remove the callout prefix '>' if it exists on each line of the captured JSON
                 // We handle multiple levels of '>' and optional spaces, but ONLY at the start of the line
                 const jsonString = match[1].split('\n').map(line => line.replace(/^(?:>\s*)+/, '')).join('\n');
-                const rawData = JSON.parse(jsonString);
+                const rawData = JSON.parse(jsonString) as CompactExamResult;
 
                 // Strictly using compact format
                 results.push(this.decompressResult(rawData));

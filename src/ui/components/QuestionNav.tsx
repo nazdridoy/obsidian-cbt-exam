@@ -10,7 +10,7 @@ interface NavProps {
     examResult?: ExamResult | null;
 }
 
-export const QuestionNav: React.FC<NavProps> = ({ total, current, answers, questionIds, onNavigate, examResult }) => {
+export const QuestionNav: React.FC<NavProps> = ({ total: _total, current, answers, questionIds, onNavigate, examResult }) => {
     return (
         <div className="exam-nav-grid">
             {questionIds.map((qid, idx) => {

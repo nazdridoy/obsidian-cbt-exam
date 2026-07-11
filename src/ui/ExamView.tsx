@@ -54,7 +54,7 @@ export class ExamView extends TextFileView {
         return this.data;
     }
 
-    setViewData(data: string, clear: boolean): void {
+    setViewData(data: string, _clear: boolean): void {
         this.data = data;
         this.parseAndRender();
     }

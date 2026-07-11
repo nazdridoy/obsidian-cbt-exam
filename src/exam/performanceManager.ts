@@ -69,7 +69,7 @@ export class PerformanceManager {
 
         try {
             const jsonString = jsonMatch[1].split('\n').map(line => line.replace(/^(?:>\s*)+/, '')).join('\n');
-            const data: PerformanceDataBlock = JSON.parse(jsonString);
+            const data = JSON.parse(jsonString) as PerformanceDataBlock;
             return this.decompress(data);
         } catch (e) {
             console.error("Failed to parse performance data:", e);

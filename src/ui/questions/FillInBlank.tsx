@@ -14,10 +14,10 @@ interface Props {
 
 export const FillInBlank: React.FC<Props> = ({ question, answer, onChange, readOnly, showResult, app }) => {
     // Current answers, default to empty strings
-    const values = answer.textInputs || new Array(question.correctAnswers.length).fill("");
+    const values: string[] = answer.textInputs || new Array<string>(question.correctAnswers.length).fill("");
 
     const handleChange = (idx: number, val: string) => {
-        const newValues = [...values];
+        const newValues: string[] = [...values];
         newValues[idx] = val;
         onChange({ textInputs: newValues });
     };

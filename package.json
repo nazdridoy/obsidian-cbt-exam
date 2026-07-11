@@ -1,6 +1,6 @@
 {
     "name": "cbt-exam",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "description": "CBT Exam Simulator",
     "main": "main.js",
     "type": "module",
@@ -29,7 +29,6 @@
         "@types/node": "^16.11.6",
         "@types/react": "^18.2.0",
         "@types/react-dom": "^18.2.0",
-        "builtin-modules": "3.3.0",
         "esbuild": "0.17.3",
         "eslint": "^9.0.0",
         "eslint-plugin-obsidianmd": "^0.1.9",
