@@ -56,7 +56,7 @@ export class FlashQuizParser {
                         _rawPairs: (type === 'MATCH') ? [] : undefined,
                         _labels: (type === 'MC' || type === 'SATA') ? [] : undefined,
                         _answerKeys: (type === 'MC' || type === 'SATA') ? [] : undefined
-                    } as Partial<Question> & { _rawPairs?: Array<{ left: string; right: string }>, _labels?: string[], _answerKeys?: string[] };
+                    };
 
                     // 1.1 Detect and validate question number
                     const numberMatch = remainingText.match(Q_NUMBER_REGEX);

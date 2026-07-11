@@ -2,8 +2,8 @@
    1. LAYOUT & CORE CONTAINERS
    ========================================================================= */
 
-.exam-view-container {
-    padding: 0 !important;
+.mod-cbt-exam.exam-view-container {
+    padding: 0;
     height: 100%;
     width: 100%;
     display: flex;
@@ -98,9 +98,9 @@
 }
 
 /* Reset Markdown Preview Padding/Margins for tighter UI */
-.exam-ui-layout .markdown-preview-view {
-    padding: 0 !important;
-    margin: 0 !important;
+.mod-cbt-exam .markdown-preview-view {
+    padding: 0;
+    margin: 0;
 }
 
 /* --- Navigation --- */
@@ -171,21 +171,21 @@
    2. SHARED COMPONENTS
    ========================================================================= */
 
-.button-large {
-    padding: 0.8rem 2.4rem !important;
-    font-size: 1.05rem !important;
-    font-weight: 600 !important;
-    border-radius: 6px !important;
-    transition: all 0.2s ease-in-out !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    border: none !important;
+.mod-cbt-exam .button-large {
+    padding: 0.8rem 2.4rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
     cursor: pointer;
-    color: white !important;
+    color: white;
 }
 
-.button-large:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+.mod-cbt-exam .button-large:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     filter: brightness(1.1);
 }
 
@@ -194,41 +194,41 @@
 }
 
 /* Custom Button Themes - Solid Matte */
-.btn-primary {
-    background-color: var(--interactive-accent) !important;
+.mod-cbt-exam .btn-primary {
+    background-color: var(--interactive-accent);
 }
 
-.btn-primary:hover {
-    background-color: var(--interactive-accent-hover) !important;
+.mod-cbt-exam .btn-primary:hover {
+    background-color: var(--interactive-accent-hover);
 }
 
-.btn-secondary {
-    background-color: var(--background-primary) !important;
-    color: var(--text-normal) !important;
-    border: 1px solid var(--background-modifier-border) !important;
+.mod-cbt-exam .btn-secondary {
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    border: 1px solid var(--background-modifier-border);
 }
 
-.btn-success {
-    background-color: #2e7d32 !important;
+.mod-cbt-exam .btn-success {
+    background-color: #2e7d32;
     /* Muted Green */
 }
 
-.btn-success:hover {
-    background-color: #388e3c !important;
+.mod-cbt-exam .btn-success:hover {
+    background-color: #388e3c;
 }
 
-.btn-info {
-    background-color: #1565c0 !important;
+.mod-cbt-exam .btn-info {
+    background-color: #1565c0;
     /* Muted Blue */
 }
 
-.btn-info:hover {
-    background-color: #1976d2 !important;
+.mod-cbt-exam .btn-info:hover {
+    background-color: #1976d2;
 }
 
-.btn-danger {
-    background-color: var(--color-red) !important;
-    color: white !important;
+.mod-cbt-exam .btn-danger {
+    background-color: var(--color-red);
+    color: white;
 }
 
 .btn-danger:hover {
@@ -258,14 +258,14 @@
     border-color: var(--interactive-accent);
 }
 
-.option-item.correct {
-    border-color: var(--color-green) !important;
-    background-color: rgba(var(--color-green-rgb), 0.1) !important;
+.mod-cbt-exam .option-item.correct {
+    border-color: var(--color-green);
+    background-color: rgba(var(--color-green-rgb), 0.1);
 }
 
-.option-item.incorrect {
-    border-color: var(--color-red) !important;
-    background-color: rgba(var(--color-red-rgb), 0.1) !important;
+.mod-cbt-exam .option-item.incorrect {
+    border-color: var(--color-red);
+    background-color: rgba(var(--color-red-rgb), 0.1);
 }
 
 /* Fix for markdown content inside buttons/options */
@@ -419,14 +419,14 @@
     border-color: var(--interactive-accent);
 }
 
-.matching-item.correct {
-    border-color: var(--color-green) !important;
-    background-color: rgba(var(--color-green-rgb), 0.1) !important;
+.mod-cbt-exam .matching-item.correct {
+    border-color: var(--color-green);
+    background-color: rgba(var(--color-green-rgb), 0.1);
 }
 
-.matching-item.incorrect {
-    border-color: var(--color-red) !important;
-    background-color: rgba(var(--color-red-rgb), 0.1) !important;
+.mod-cbt-exam .matching-item.incorrect {
+    border-color: var(--color-red);
+    background-color: rgba(var(--color-red-rgb), 0.1);
 }
 
 .matching-item .badge {
@@ -513,11 +513,11 @@
     vertical-align: middle;
 }
 
-.fib-input {
-    border: none !important;
-    border-bottom: 2px solid var(--interactive-accent) !important;
-    background: transparent !important;
-    color: var(--text-normal) !important;
+.mod-cbt-exam .fib-input {
+    border: none;
+    border-bottom: 2px solid var(--interactive-accent);
+    background: transparent;
+    color: var(--text-normal);
     width: 120px;
     text-align: center;
     margin: 0 0.2rem;
@@ -526,18 +526,18 @@
     height: 1.5em;
 }
 
-.fib-input:disabled {
-    opacity: 1 !important;
-    color: var(--text-normal) !important;
+.mod-cbt-exam .fib-input:disabled {
+    opacity: 1;
+    color: var(--text-normal);
     cursor: default;
 }
 
-.fib-input.correct {
-    border-bottom-color: var(--color-green) !important;
+.mod-cbt-exam .fib-input.correct {
+    border-bottom-color: var(--color-green);
 }
 
-.fib-input.incorrect {
-    border-bottom-color: var(--color-red) !important;
+.mod-cbt-exam .fib-input.incorrect {
+    border-bottom-color: var(--color-red);
 }
 
 .fib-answer-popover {
@@ -751,7 +751,7 @@
     gap: 0.8rem;
 }
 
-.is-mobile .results-actions-container .button-large {
+.is-mobile .mod-cbt-exam .results-actions-container .button-large {
     width: 100%;
     min-width: unset;
     /* Allow full width scaling */
@@ -759,7 +759,7 @@
 
 
 
-.results-actions-container .button-large {
+.mod-cbt-exam .results-actions-container .button-large {
     min-width: 160px;
 }
 
@@ -811,10 +811,10 @@
     background-color: var(--background-modifier-hover);
 }
 
-.btn-small {
-    padding: 0.4rem 1rem !important;
-    font-size: 0.85rem !important;
-    min-width: auto !important;
+.mod-cbt-exam .btn-small {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    min-width: auto;
 }
 
 /* =========================================================================
@@ -841,14 +841,14 @@
     position: relative;
 }
 
-.landing-close-button {
+.mod-cbt-exam .landing-close-button {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
-    background-color: transparent !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+    background-color: transparent;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     cursor: pointer;
     color: var(--text-muted);
     padding: 0;
@@ -944,10 +944,10 @@
    ========================================================================= */
 
 .cbt-confirm-modal {
-    max-width: 500px !important;
-    border-radius: 12px !important;
-    padding: 1.5rem !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    max-width: 500px;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .cbt-confirm-modal .modal-title {
@@ -999,20 +999,20 @@
 
 /* --- Adaptive Button Theme --- */
 
-.btn-adaptive {
-    background: linear-gradient(135deg, #e6a817, #d4941a) !important;
+.mod-cbt-exam .btn-adaptive {
+    background: linear-gradient(135deg, #e6a817, #d4941a);
 }
 
-.btn-adaptive:hover:not(:disabled) {
-    background: linear-gradient(135deg, #f0b829, #e0a020) !important;
+.mod-cbt-exam .btn-adaptive:hover:not(:disabled) {
+    background: linear-gradient(135deg, #f0b829, #e0a020);
 }
 
-.btn-adaptive.btn-disabled,
-.btn-adaptive:disabled {
-    opacity: 0.45 !important;
-    cursor: not-allowed !important;
-    transform: none !important;
-    box-shadow: none !important;
+.mod-cbt-exam .btn-adaptive.btn-disabled,
+.mod-cbt-exam .btn-adaptive:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* --- Performance Summary Panel --- */
@@ -1242,62 +1242,62 @@
     text-align: center;
 }
 
-.u-mb-0 {
-    margin-bottom: 0 !important;
+.mod-cbt-exam .u-mb-0 {
+    margin-bottom: 0;
 }
 
-.u-mb-05 {
-    margin-bottom: 0.5rem !important;
+.mod-cbt-exam .u-mb-05 {
+    margin-bottom: 0.5rem;
 }
 
-.u-mb-1 {
-    margin-bottom: 1rem !important;
+.mod-cbt-exam .u-mb-1 {
+    margin-bottom: 1rem;
 }
 
-.u-mb-2 {
-    margin-bottom: 2rem !important;
+.mod-cbt-exam .u-mb-2 {
+    margin-bottom: 2rem;
 }
 
-.u-mt-05 {
-    margin-top: 0.5rem !important;
+.mod-cbt-exam .u-mt-05 {
+    margin-top: 0.5rem;
 }
 
-.u-mt-1 {
-    margin-top: 1rem !important;
+.mod-cbt-exam .u-mt-1 {
+    margin-top: 1rem;
 }
 
-.u-mt-2 {
-    margin-top: 2rem !important;
+.mod-cbt-exam .u-mt-2 {
+    margin-top: 2rem;
 }
 
-.u-mr-05 {
-    margin-right: 0.5rem !important;
+.mod-cbt-exam .u-mr-05 {
+    margin-right: 0.5rem;
 }
 
-.u-w-full {
-    width: 100% !important;
+.mod-cbt-exam .u-w-full {
+    width: 100%;
 }
 
-.u-p-08 {
-    padding: 0.8rem !important;
+.mod-cbt-exam .u-p-08 {
+    padding: 0.8rem;
 }
 
-.u-cursor-default {
-    cursor: default !important;
+.mod-cbt-exam .u-cursor-default {
+    cursor: default;
 }
 
-.u-cursor-pointer {
-    cursor: pointer !important;
+.mod-cbt-exam .u-cursor-pointer {
+    cursor: pointer;
 }
 
-.u-pre-wrap {
-    white-space: pre-wrap !important;
+.mod-cbt-exam .u-pre-wrap {
+    white-space: pre-wrap;
 }
 
-.u-block {
-    display: block !important;
+.mod-cbt-exam .u-block {
+    display: block;
 }
 
-.u-small {
-    font-size: 0.8em !important;
+.mod-cbt-exam .u-small {
+    font-size: 0.8em;
 }
