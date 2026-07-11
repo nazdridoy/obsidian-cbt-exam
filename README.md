@@ -4,6 +4,9 @@
 
 An [Obsidian](https://obsidian.md/) plugin for creating interactive, timed exams from your notes. It uses a human-readable syntax to render professional computer-based testing (CBT) environments directly within your vault.
 
+<img src="https://github.com/nazdridoy/obsidian-cbt-exam/blob/main/assets/preview.jpg?raw=true" />
+
+
 ## Features
 
 - **Integrated Exam View**: Runs as a native workspace tab with an integrated timer and question navigator.
@@ -86,6 +89,12 @@ Questions are defined using specific markers followed by the question text and a
 
 ## Installation
 
+### From Community Plugins (Recommended)
+1. Open **Settings** in Obsidian.
+2. Go to **Community Plugins** and click **Browse**.
+3. Search for **"CBT Exam Simulator"**.
+4. Click **Install**, then **Enable**.
+
 ### Using BRAT (Beta Reviewers Auto-update Tool)
 1. Install the **[BRAT](https://github.com/TfTHacker/obsidian42-brat)** plugin from the Community Plugins list.
 2. Enable the BRAT plugin in Settings.
@@ -96,7 +105,7 @@ Questions are defined using specific markers followed by the question text and a
 
 ### Manual Installation
 1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/nazdridoy/obsidian-cbt-exam/releases).
-2. Create `cbt-exam` in your vault's `.obsidian/plugins/` directory.
+2. Create a `cbt-exam` folder in your vault's `.obsidian/plugins/` directory.
 3. Move the downloaded files into that folder.
 4. Enable **CBT Exam Simulator** in Obsidian Settings > Community Plugins.
 
