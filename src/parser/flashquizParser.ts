@@ -150,6 +150,17 @@ export class FlashQuizParser {
             rangeErrors.push(...result.errors);
         }
 
+        // 6. Apply question count limit (after range)
+        // With range: take first n from the range. Without range: randomly sample n from all questions.
+        if (metadata.examCount != null && metadata.examCount > 0 && finalQuestions.length > metadata.examCount) {
+            const hasRange = metadata.examRange && metadata.examRange !== "-";
+            if (hasRange) {
+                finalQuestions = finalQuestions.slice(0, metadata.examCount);
+            } else {
+                finalQuestions = this.randomSample(finalQuestions, metadata.examCount);
+            }
+        }
+
         return {
             title: metadata.title || 'Untitled Exam',
             sourceFile: filePath,
@@ -161,9 +172,20 @@ export class FlashQuizParser {
                 shuffleQuestions: metadata.shuffle,
                 showAnswer: metadata.showAnswer,
                 questionRange: metadata.examRange,
+                questionCount: metadata.examCount,
                 rangeErrors: rangeErrors.length > 0 ? rangeErrors : undefined
             }
         };
+    }
+
+    /** Randomly sample n items from array (Fisher-Yates shuffle, then slice). */
+    private static randomSample<T>(arr: T[], n: number): T[] {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy.slice(0, n);
     }
 
     private static applyRangeFilter(questions: Question[], rangeStr: string): { filtered: Question[], errors: string[] } {
@@ -318,6 +340,9 @@ export class FlashQuizParser {
 
         const rangeMatch = yaml.match(/exam-range:\s*(.*)/);
         if (rangeMatch) result.examRange = rangeMatch[1].replace(/['"]/g, '').trim();
+
+        const countMatch = yaml.match(/exam-count:\s*(\d+)/);
+        if (countMatch) result.examCount = parseInt(countMatch[1], 10);
 
         return result;
     }
