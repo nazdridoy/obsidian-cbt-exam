@@ -3,6 +3,7 @@ import { Question, QuestionType, ExamDefinition, MultipleChoiceQuestion, SelectA
 // Regex patterns
 const HEADER_REGEX = /^@(\w+)\s+(.*)/;
 const Q_NUMBER_REGEX = /^(\d+)[).]\s*/;
+const QID_REGEX = /<!--\s*qid:([^;\s>]+)(?:;[^>]*)?-->/i;
 const OPTION_REGEX = /^(\S+)([).])\s+(.*)/;
 const MATCH_PAIR_REGEX = /^(.+?)\s*\|\s*(.+)$/; // Left | Right
 
@@ -17,6 +18,7 @@ export class FlashQuizParser {
         const lines = content.split('\n');
         const questions: Question[] = [];
         const usedNumbers = new Set<number>();
+        const usedIds = new Set<string>();
         let currentQ: Partial<Question> & { _rawPairs?: Array<{ left: string; right: string }>, _labels?: string[], _answerKeys?: string[] } | null = null;
 
         // Metadata extraction (simple frontmatter regex)
@@ -43,9 +45,19 @@ export class FlashQuizParser {
                 const type = this.mapType(typeMarker);
 
                 if (type) {
+                    const originalHeaderText = remainingText;
+                    const qidMatch = remainingText.match(QID_REGEX);
+                    const topicMatch = remainingText.match(/<!--\s*qid:[^>]*;\s*topic:([^;>]+)[^>]*-->/i);
+                    const explicitId = qidMatch ? qidMatch[1].trim() : null;
+                    const generatedId = this.generateId(originalHeaderText);
+                    if (qidMatch) {
+                        remainingText = remainingText.replace(qidMatch[0], '').replace(/\s{2,}/g, ' ').trim();
+                    }
                     currentQ = {
-                        id: this.generateId(remainingText), // Stable ID based on question text
+                        id: explicitId || generatedId,
+                        legacyId: explicitId ? generatedId : undefined,
                         type: type,
+                        topic: topicMatch ? topicMatch[1].trim() : undefined,
                         questionText: "",
                         errors: [],
                         // Initialize type-specific arrays
@@ -57,6 +69,11 @@ export class FlashQuizParser {
                         _labels: (type === 'MC' || type === 'SATA') ? [] : undefined,
                         _answerKeys: (type === 'MC' || type === 'SATA') ? [] : undefined
                     };
+
+                    if (usedIds.has(currentQ.id)) {
+                        currentQ.errors?.push(`Duplicate question id '${currentQ.id}' found.`);
+                    }
+                    usedIds.add(currentQ.id);
 
                     // 1.1 Detect and validate question number
                     const numberMatch = remainingText.match(Q_NUMBER_REGEX);

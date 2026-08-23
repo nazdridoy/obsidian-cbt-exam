@@ -23,19 +23,30 @@ export const MarkdownContent: React.FC<MarkdownContentProps> = ({
 
     React.useEffect(() => {
         if (containerRef.current) {
-            containerRef.current.empty();
+            const container = containerRef.current;
+            const effectiveSourcePath = sourcePath || app.workspace.getActiveFile()?.path || '';
+            const handleInternalLinkClick = (event: MouseEvent) => {
+                const target = event.target;
+                const link = target instanceof Element ? target.closest<HTMLAnchorElement>('a.internal-link') : null;
+                if (!link || !container.contains(link)) return;
+                const linkText = link.getAttribute('data-href') || link.getAttribute('href');
+                if (!linkText) return;
+                event.preventDefault();
+                event.stopPropagation();
+                void app.workspace.openLinkText(linkText, effectiveSourcePath, true);
+            };
+
+            container.empty();
+            container.addEventListener('click', handleInternalLinkClick);
             void MarkdownRenderer.render(
                 app,
                 content,
-                containerRef.current,
-                sourcePath,
+                container,
+                effectiveSourcePath,
                 componentRef.current
             );
+            return () => container.removeEventListener('click', handleInternalLinkClick);
         }
-
-        // No cleanup needed for render as it appends to the element, 
-        // but if we used addChild we might need it. 
-        // Component lifecycle is handled by the ephemeral componentRef.
     }, [content, app, sourcePath]);
 
     const Tag = tagName as React.ElementType;

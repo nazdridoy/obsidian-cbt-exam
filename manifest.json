@@ -1,9 +1,9 @@
 {
-	"id": "cbt-exam",
-	"name": "CBT Exam Simulator",
-	"version": "1.5.3",
+	"id": "cbt-exam-alevel",
+	"name": "CBT Exam Simulator (A-Level)",
+	"version": "1.5.3-alevel.1",
 	"minAppVersion": "1.1.0",
-	"description": "A robust, offline-first CBT exam simulator using FlashQuiz format.",
+	"description": "A local A-Level fork with autosave, manual or AI-assisted grading, stable question IDs, and expression capture.",
 	"author": "nazdridoy",
 	"authorUrl": "https://github.com/nazdridoy",
 	"isDesktopOnly": false

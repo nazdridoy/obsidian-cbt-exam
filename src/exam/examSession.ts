@@ -1,5 +1,75 @@
 import { ExamDefinition, ExamResult, ExamSession, QuestionResult, UserAnswerState } from "../types/types";
 
+const CBT_DRAFT_PREFIX = 'cbt-exam:draft:v1:';
+
+export interface SessionDraft {
+    version: 1;
+    sourcePath: string;
+    questionRange: string;
+    savedAt: number;
+    status: ExamSession['status'];
+    startTime: number;
+    endTime?: number;
+    timeLimitSeconds: number;
+    currentQuestionIndex: number;
+    answers: Record<string, UserAnswerState>;
+    isAdaptive?: boolean;
+    aiRequestId?: string;
+}
+
+function getSessionDraftKey(sourcePath: string): string {
+    return `${CBT_DRAFT_PREFIX}${sourcePath}`;
+}
+
+export function loadSessionDraft(sourcePath: string | undefined, definition: ExamDefinition): SessionDraft | null {
+    if (!sourcePath || typeof globalThis.localStorage === 'undefined') return null;
+    try {
+        const raw = globalThis.localStorage.getItem(getSessionDraftKey(sourcePath));
+        if (!raw) return null;
+        const draft = JSON.parse(raw) as SessionDraft;
+        const activeRange = definition.metadata.questionRange || '-';
+        if (draft.version !== 1 || draft.sourcePath !== sourcePath || (draft.questionRange || '-') !== activeRange) return null;
+        const validQids = new Set(definition.questions.map(q => q.id));
+        if (Object.keys(draft.answers || {}).some(qid => !validQids.has(qid))) return null;
+        return draft;
+    } catch (e) {
+        console.error('Failed to load CBT draft:', e);
+        return null;
+    }
+}
+
+export function saveSessionDraft(sourcePath: string | undefined, session: ExamSession): void {
+    if (!sourcePath || typeof globalThis.localStorage === 'undefined') return;
+    try {
+        const draft: SessionDraft = {
+            version: 1,
+            sourcePath,
+            questionRange: session.definition.metadata.questionRange || '-',
+            savedAt: Date.now(),
+            status: session.status,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            timeLimitSeconds: session.timeLimitSeconds,
+            currentQuestionIndex: session.currentQuestionIndex,
+            answers: session.answers,
+            isAdaptive: session.isAdaptive,
+            aiRequestId: session.aiRequestId,
+        };
+        globalThis.localStorage.setItem(getSessionDraftKey(sourcePath), JSON.stringify(draft));
+    } catch (e) {
+        console.error('Failed to save CBT draft:', e);
+    }
+}
+
+export function clearSessionDraft(sourcePath: string | undefined): void {
+    if (!sourcePath || typeof globalThis.localStorage === 'undefined') return;
+    try {
+        globalThis.localStorage.removeItem(getSessionDraftKey(sourcePath));
+    } catch (e) {
+        console.error('Failed to clear CBT draft:', e);
+    }
+}
+
 export class ExamSessionManager {
     private session: ExamSession;
 
@@ -42,7 +112,7 @@ export class ExamSessionManager {
     }
 
     public answerQuestion(questionId: string, answer: Partial<UserAnswerState>): ExamSession {
-        if (this.session.status !== 'IN_PROGRESS') return this.session;
+        if (this.session.status !== 'IN_PROGRESS' && this.session.status !== 'REVIEW' && this.session.status !== 'AI_PENDING') return this.session;
 
         const currentAns = this.session.answers[questionId];
         this.session.answers[questionId] = {
@@ -96,6 +166,51 @@ export class ExamSessionManager {
 
     public setStatus(status: ExamSession['status']): ExamSession {
         this.session.status = status;
+        return { ...this.session };
+    }
+
+    public restoreDraft(draft: SessionDraft): ExamSession {
+        this.session.status = draft.status || 'IN_PROGRESS';
+        this.session.startTime = draft.startTime || Date.now();
+        this.session.endTime = draft.endTime;
+        this.session.timeLimitSeconds = draft.timeLimitSeconds || this.session.timeLimitSeconds;
+        this.session.currentQuestionIndex = Math.min(
+            Math.max(draft.currentQuestionIndex || 0, 0),
+            Math.max(this.session.definition.questions.length - 1, 0)
+        );
+        this.session.answers = { ...(draft.answers || {}) };
+        this.session.isAdaptive = !!draft.isAdaptive;
+        this.session.aiRequestId = draft.aiRequestId;
+        this.session.definition.questions.forEach(q => {
+            if (!this.session.answers[q.id]) {
+                this.session.answers[q.id] = { questionId: q.id, status: 'UNANSWERED' };
+            }
+        });
+        return { ...this.session };
+    }
+
+    public setAiRequest(requestId: string): ExamSession {
+        this.session.aiRequestId = requestId;
+        this.session.status = 'AI_PENDING';
+        return { ...this.session };
+    }
+
+    public applyAiDecisions(decisions: Array<{ qid: string; verdict: string; confidence: 'high' | 'medium' | 'low'; rationale: string }>): ExamSession {
+        const byQid = new Map(decisions.map(item => [item.qid, item]));
+        this.session.definition.questions.forEach(q => {
+            const decision = byQid.get(q.id);
+            if (!decision || (decision.verdict !== 'correct' && decision.verdict !== 'incorrect')) return;
+            const current = this.session.answers[q.id];
+            if (!current) return;
+            this.session.answers[q.id] = {
+                ...current,
+                manualCorrect: decision.verdict === 'correct',
+                gradingSource: 'ai',
+                aiConfidence: decision.confidence,
+                aiRationale: decision.rationale,
+            };
+        });
+        this.session.status = 'REVIEW';
         return { ...this.session };
     }
 

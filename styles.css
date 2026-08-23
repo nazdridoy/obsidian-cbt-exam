@@ -1301,3 +1301,63 @@
 .mod-cbt-exam .u-small {
     font-size: 0.8em;
 }
+
+.exam-progress-bar-container {
+  width: 100%;
+  height: 3px;
+  background-color: var(--background-modifier-border);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.exam-progress-bar-fill {
+  height: 100%;
+  background: var(--cbt-accent-gradient);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mod-cbt-exam .self-grade-container {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--cbt-card-border);
+  border-radius: var(--cbt-radius-m);
+  background-color: var(--background-secondary);
+}
+
+.mod-cbt-exam .self-grade-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.mod-cbt-exam .self-grade-button {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--cbt-radius-m);
+  border: 1px solid var(--cbt-card-border);
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.mod-cbt-exam .self-grade-button.correct.selected {
+  color: #fff;
+  background: var(--cbt-success-gradient);
+  border-color: #10b981;
+}
+
+.mod-cbt-exam .self-grade-button.incorrect.selected {
+  color: #fff;
+  background: var(--cbt-danger-gradient);
+  border-color: #ef4444;
+}
+
+.mod-cbt-exam .ai-grade-rationale {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--interactive-accent);
+  background-color: var(--background-secondary);
+}

@@ -1,5 +1,5 @@
 import { App, TFile, normalizePath } from "obsidian";
-import { ExamResult, AnswerStatus } from "../types/types";
+import { ExamResult, AnswerStatus, QuestionType } from "../types/types";
 
 interface CompactExamResult {
     id: string;
@@ -9,8 +9,11 @@ interface CompactExamResult {
     pct: number;
     p: boolean;
     dur: number;
+    rng?: string;
     res: Array<{
         q: string;
+        o?: number;
+        ty?: QuestionType;
         ok: boolean;
         s: number;
         st: AnswerStatus;
@@ -18,6 +21,10 @@ interface CompactExamResult {
         idxs?: number[];
         val?: boolean;
         txt?: string[];
+        mc?: boolean;
+        gs?: 'manual' | 'ai';
+        gc?: 'high' | 'medium' | 'low';
+        gr?: string;
         pts?: Array<{ l: number, r: number }>;
         m?: boolean;
     }>;
@@ -220,9 +227,12 @@ ${sessionDetail}`;
             pct: parseFloat(result.percentage.toFixed(1)),
             p: result.isPass,
             dur: parseFloat(result.durationSeconds.toFixed(1)),
+            rng: result.questionRange,
             res: result.questionResults.map(qr => {
                 const entry: Record<string, unknown> = {
                     q: qr.questionId,
+                    o: qr.questionOrder,
+                    ty: qr.questionType,
                     ok: qr.isCorrect,
                     s: qr.score,
                     st: qr.userAnswer.status,
@@ -231,6 +241,10 @@ ${sessionDetail}`;
                 if (qr.userAnswer.selectedOptionIndices !== undefined) entry.idxs = qr.userAnswer.selectedOptionIndices;
                 if (qr.userAnswer.booleanSelection !== undefined) entry.val = qr.userAnswer.booleanSelection;
                 if (qr.userAnswer.textInputs !== undefined) entry.txt = qr.userAnswer.textInputs;
+                if (typeof qr.userAnswer.manualCorrect === 'boolean') entry.mc = qr.userAnswer.manualCorrect;
+                if (qr.userAnswer.gradingSource) entry.gs = qr.userAnswer.gradingSource;
+                if (qr.userAnswer.aiConfidence) entry.gc = qr.userAnswer.aiConfidence;
+                if (qr.userAnswer.aiRationale) entry.gr = qr.userAnswer.aiRationale;
                 if (qr.userAnswer.matchedPairs !== undefined) entry.pts = qr.userAnswer.matchedPairs;
                 if (qr.userAnswer.isMarked) entry.m = true;
                 return entry;
@@ -248,8 +262,11 @@ ${sessionDetail}`;
             percentage: compact.pct,
             isPass: compact.p,
             durationSeconds: compact.dur,
+            questionRange: compact.rng,
             questionResults: compact.res.map((r) => ({
                 questionId: r.q,
+                questionOrder: r.o,
+                questionType: r.ty,
                 isCorrect: r.ok,
                 score: r.s,
                 userAnswer: {
@@ -259,6 +276,10 @@ ${sessionDetail}`;
                     selectedOptionIndices: r.idxs,
                     booleanSelection: r.val,
                     textInputs: r.txt,
+                    manualCorrect: r.mc,
+                    gradingSource: r.gs,
+                    aiConfidence: r.gc,
+                    aiRationale: r.gr,
                     matchedPairs: r.pts,
                     isMarked: r.m
                 }

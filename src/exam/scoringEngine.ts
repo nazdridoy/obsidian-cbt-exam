@@ -28,6 +28,7 @@ export class ScoringEngine {
             percentage,
             isPass,
             durationSeconds: ((session.endTime || Date.now()) - session.startTime) / 1000,
+            questionRange: session.definition.metadata.questionRange,
             questionResults: results
         };
     }
@@ -35,6 +36,8 @@ export class ScoringEngine {
     private static gradeQuestion(q: Question, answer: UserAnswerState | undefined): QuestionResult {
         const baseResult: QuestionResult = {
             questionId: q.id,
+            questionOrder: q.order,
+            questionType: q.type,
             isCorrect: false,
             score: 0,
             userAnswer: answer || { questionId: q.id, status: 'UNANSWERED' }
@@ -101,10 +104,7 @@ export class ScoringEngine {
 
             case 'SA':
             case 'LA': {
-                // Simple grading: correct if any non-empty input is provided
-                if (answer.textInputs && answer.textInputs[0] && answer.textInputs[0].trim().length > 0) {
-                    isCorrect = true;
-                }
+                if (typeof answer.manualCorrect === 'boolean') isCorrect = answer.manualCorrect;
                 break;
             }
         }

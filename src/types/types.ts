@@ -2,8 +2,11 @@ export type QuestionType = 'MC' | 'SATA' | 'TF' | 'FIB' | 'MATCH' | 'SA' | 'LA';
 
 export interface BaseQuestion {
     id: string; // Hash of the question text for stability
+    legacyId?: string; // Previous generated ID when an explicit qid is present
     type: QuestionType;
     questionText: string; // Markdown supported
+    label?: string;
+    topic?: string;
     explanation?: string; // Optional text shown AFTER exam submission
     errors?: string[]; // Validation error messages
     order?: number; // Sequence number from source
@@ -83,11 +86,15 @@ export interface UserAnswerState {
     textInputs?: string[];                 // FIB, SA, LA
     matchedPairs?: Array<{ l: number, r: number }>; // MATCH
     isMarked?: boolean;                    // Question marked by user
+    manualCorrect?: boolean;               // Manual/self grading for SA/LA
+    gradingSource?: 'manual' | 'ai';
+    aiConfidence?: 'high' | 'medium' | 'low';
+    aiRationale?: string;
 }
 
 export interface ExamSession {
     definition: ExamDefinition;
-    status: 'IDLE' | 'IN_PROGRESS' | 'PAUSED' | 'SUBMITTED' | 'REVIEW';
+    status: 'IDLE' | 'IN_PROGRESS' | 'PAUSED' | 'SUBMITTED' | 'REVIEW' | 'AI_PENDING';
     startTime: number; // Unix timestamp
     endTime?: number;
 
@@ -99,10 +106,13 @@ export interface ExamSession {
 
     // Adaptive Study mode
     isAdaptive?: boolean;
+    aiRequestId?: string;
 }
 
 export interface QuestionResult {
     questionId: string;
+    questionOrder?: number;
+    questionType?: QuestionType;
     isCorrect: boolean;
     score: number; // 0.0 to 1.0
     userAnswer: UserAnswerState;
@@ -117,6 +127,7 @@ export interface ExamResult {
     percentage: number; // 0.0 - 100.0
     isPass: boolean;
     durationSeconds: number;
+    questionRange?: string;
 
     questionResults: QuestionResult[];
 }
